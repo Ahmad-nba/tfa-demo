@@ -1,26 +1,48 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Background System */
+  --color-background: #0c0f17;
+  --color-foreground: #ffffff;
+
+  /* Surfaces (Elevation Levels) */
+  --color-card: #151b28;
+  --color-accent2: #2a9d8f;
+  --color-card-foreground: #ffffff;
+      /* toning of card bg */
+  --color-surface-2: #12161f; 
+
+  /* Primary brand Actions these are dark colors  */
+  --color-primary: #1a2332;
+  --color-primary-foreground: #ffffff;
+  --color-primary-hover: #253041;
+
+  /* Text System */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a0aec0;
+  --color-text-muted: #6b7280;
+
+  /* Borders */
+  --color-border: #1f2937;
+
+  /* Semantic — Success */
+  --color-success: #2baf6c;
+  --color-success-background: #103f29;
+  --color-success-foreground: #d9f4e7;
+
+  /* Semantic — Gold */
+  --color-warning: #E5B74A;
+  --color-warning-background: #3a2f14;
+  --color-warning-foreground: #fcefc7;
+
+  /* Semantic — Destructive */
+  --color-destructive: #e05454;
+  --color-destructive-background: #3f1e1e;
+  --color-destructive-foreground: #f8d0d0;
+
+  /* Semantic — Info (blue) */
+  --color-info: #3fa9f5;
+  --color-info-background: #0e1a25;
+  --color-info-foreground: #e0f3ff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
