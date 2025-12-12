@@ -81,7 +81,7 @@ export default function TransactionsPage() {
                 UGX {totalIn.toLocaleString()}
               </p>
             </div>
-            <ArrowDownRight className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-emerald-500 flex-shrink-0" />
+            <ArrowDownRight className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-emerald-500 shrink-0" />
           </div>
         </div>
         
@@ -93,7 +93,7 @@ export default function TransactionsPage() {
                 UGX {totalOut.toLocaleString()}
               </p>
             </div>
-            <ArrowUpRight className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-rose-500 flex-shrink-0" />
+            <ArrowUpRight className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-rose-500 shrink-0" />
           </div>
         </div>
         
@@ -105,7 +105,7 @@ export default function TransactionsPage() {
                 {netFlow >= 0 ? "+" : "-"} UGX {Math.abs(netFlow).toLocaleString()}
               </p>
             </div>
-            <Calendar className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-blue-500 flex-shrink-0" />
+            <Calendar className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-blue-500 shrink-0" />
           </div>
         </div>
       </div>

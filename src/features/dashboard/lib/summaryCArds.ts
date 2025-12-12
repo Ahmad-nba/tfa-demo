@@ -1,8 +1,9 @@
 import { Wallet, PiggyBank, TrendingUp, Landmark } from "lucide-react";
+import { useWalletStore } from "@/features/wallet/store/walletStore";
 export const summaryCards = [
   {
     label: "Total balance",
-    value: "UGX 000.000.000",
+    value: useWalletStore.getState().totalWallet,
     change: "-2% last month",
     changeType: "down",
     href: "/dashboard/wallet",

@@ -27,3 +27,13 @@ export interface Transaction {
   date: string;
   description: string;
 }
+
+export interface Loan {
+  id: string;
+  amount: number;       // Original loan amount
+  balance: number;      // Remaining balance
+  interestRate: number; // Annual %
+  status: "active" | "paid" | "defaulted";
+  createdAt: string;
+  dueDate: string;
+}
