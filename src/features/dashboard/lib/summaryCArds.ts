@@ -13,7 +13,7 @@ export const summaryCards = [
     value: "UGX 000.000.000",
     change: "+2% last month",
     changeType: "up",
-    href: "/dashboard/wallet",
+    href: "/dashboard/savings",
     icon: PiggyBank,
   },
   {

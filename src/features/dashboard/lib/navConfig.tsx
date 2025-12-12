@@ -37,11 +37,11 @@ export const navConfig = {
 
 export const navLinks = [
   { label: "Dashboard", href: "/dashboard", icon: <MdDashboard /> },
-  { label: "My wallet", href: "/wallet", icon: <MdAccountBalanceWallet /> },
-  { label: "Investments", href: "/investments", icon: <MdTrendingUp /> },
-  { label: "Loans", href: "/loans", icon: <FaSackDollar /> },
-  { label: "Withdrawals", href: "/withdrawals", icon: <MdPayment /> },
-  { label: "Transactions", href: "/transactions", icon: <MdListAlt /> },
+  { label: "My wallet", href: "/dashboard/wallet", icon: <MdAccountBalanceWallet /> },
+  { label: "Investments", href: "/dashboard/investments", icon: <MdTrendingUp /> },
+  { label: "Loans", href: "/dashboard/loans", icon: <FaSackDollar /> },
+  { label: "Withdrawals", href: "/dashboard/withdrawals", icon: <MdPayment /> },
+  { label: "Transactions", href: "/dashboard/transactions", icon: <MdListAlt /> },
   
 ];
 export const secondaryNavLinks = [
