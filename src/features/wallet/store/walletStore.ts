@@ -8,16 +8,47 @@ import { Wallet, Policy, Loan } from "../type-safety/wallets";
    Types
 ----------------------------------------------------- */
 
+type TransactionType = "deposit" | "withdraw" | null;
+type TransactionStep =
+  | "provider"
+  | "phone"
+  | "amount"
+  | "review"
+  | "loading"
+  | "success"
+  | null;
+
+interface TransactionSession {
+  type: TransactionType;
+  step: TransactionStep;
+  provider: "mtn" | "airtel" | null;
+  phoneNumber: string;
+  amount: number;
+  targetWalletId: string | null;
+}
+
 interface WalletStore {
-  // State
+  // Wallets
   savingsWallet: Wallet | null;
   investmentWallet: Wallet | null;
   totalWallet: Wallet | null;
 
-  loans: Loan[]; // NEW: Loans array
+  loans: Loan[];
 
   availableSavingsPolicies: Policy[];
   availableInvestmentPolicies: Policy[];
+
+  /* ---------------------------------------------
+     NEW: Transaction Session
+  --------------------------------------------- */
+  transaction: TransactionSession;
+
+  startTransaction: (type: TransactionType, walletId: string) => void;
+  setTransactionProvider: (provider: "mtn" | "airtel") => void;
+  setTransactionPhone: (phone: string) => void;
+  setTransactionAmount: (amount: number) => void;
+  setTransactionStep: (step: TransactionStep) => void;
+  resetTransaction: () => void;
 
   // Actions
   setSavingsWallet: (wallet: Wallet) => void;
@@ -72,7 +103,7 @@ export const useWalletStore = create<WalletStore>()(
       };
 
       return {
-        // Initial State
+        // Initial Wallet State
         savingsWallet: null,
         investmentWallet: null,
         totalWallet: null,
@@ -81,50 +112,174 @@ export const useWalletStore = create<WalletStore>()(
         availableSavingsPolicies: mockSavingsPolicies,
         availableInvestmentPolicies: mockInvestmentPolicies,
 
-        // Wallet actions
-        setSavingsWallet: (wallet) => { set({ savingsWallet: wallet }); get().updateTotalWallet(); },
-        setInvestmentWallet: (wallet) => { set({ investmentWallet: wallet }); get().updateTotalWallet(); },
+        /* ---------------------------------------------------
+           NEW: Transaction Session (Deposit/Withdraw)
+        --------------------------------------------------- */
+        transaction: {
+          type: null,
+          step: null,
+          provider: null,
+          phoneNumber: "",
+          amount: 0,
+          targetWalletId: null,
+        },
+
+        // Start a new deposit OR withdraw flow
+        startTransaction: (type, walletId) =>
+          set({
+            transaction: {
+              type,
+              provider: null,
+              phoneNumber: "",
+              amount: 0,
+              step: "provider",
+              targetWalletId: walletId,
+            },
+          }),
+
+        setTransactionProvider: (provider) =>
+          set((s) => ({
+            transaction: { ...s.transaction, provider, step: "phone" },
+          })),
+
+        setTransactionPhone: (phone) =>
+          set((s) => ({
+            transaction: { ...s.transaction, phoneNumber: phone, step: "amount" },
+          })),
+
+        setTransactionAmount: (amount) =>
+          set((s) => ({
+            transaction: { ...s.transaction, amount },
+          })),
+
+        setTransactionStep: (step) =>
+          set((s) => ({
+            transaction: { ...s.transaction, step },
+          })),
+
+        resetTransaction: () =>
+          set({
+            transaction: {
+              type: null,
+              step: null,
+              provider: null,
+              phoneNumber: "",
+              amount: 0,
+              targetWalletId: null,
+            },
+          }),
+
+        /* ---------------------------------------------------
+           Wallet Actions (unchanged)
+        --------------------------------------------------- */
+        setSavingsWallet: (wallet) => {
+          set({ savingsWallet: wallet });
+          get().updateTotalWallet();
+        },
+
+        setInvestmentWallet: (wallet) => {
+          set({ investmentWallet: wallet });
+          get().updateTotalWallet();
+        },
+
         enrollInSavingsPolicy: (policyId) => {
-          const policy = get().availableSavingsPolicies.find(p => p.id === policyId);
+          const policy = get().availableSavingsPolicies.find((p) => p.id === policyId);
           if (!policy) return;
           const wallet: Wallet = {
-            id: `sav-${Date.now()}`, type: "savings", balance: 0, growth: 0,
+            id: `sav-${Date.now()}`,
+            type: "savings",
+            balance: 0,
+            growth: 0,
             lastUpdated: new Date().toISOString().split("T")[0],
             policy: { ...policy, enrolledAt: new Date().toISOString().split("T")[0] },
           };
-          set({ savingsWallet: wallet }); get().updateTotalWallet();
+          set({ savingsWallet: wallet });
+          get().updateTotalWallet();
         },
+
         enrollInInvestmentPolicy: (policyId) => {
-          const policy = get().availableInvestmentPolicies.find(p => p.id === policyId);
+          const policy = get().availableInvestmentPolicies.find((p) => p.id === policyId);
           if (!policy) return;
           const wallet: Wallet = {
-            id: `inv-${Date.now()}`, type: "investment", balance: 0, growth: 0,
+            id: `inv-${Date.now()}`,
+            type: "investment",
+            balance: 0,
+            growth: 0,
             lastUpdated: new Date().toISOString().split("T")[0],
             policy: { ...policy, enrolledAt: new Date().toISOString().split("T")[0] },
           };
-          set({ investmentWallet: wallet }); get().updateTotalWallet();
+          set({ investmentWallet: wallet });
+          get().updateTotalWallet();
         },
+
         depositToWallet: (walletId, amount) => {
           const { savingsWallet, investmentWallet } = get();
-          if (walletId === savingsWallet?.id) set({ savingsWallet: { ...savingsWallet, balance: savingsWallet.balance + amount, lastUpdated: new Date().toISOString().split("T")[0] } });
-          if (walletId === investmentWallet?.id) set({ investmentWallet: { ...investmentWallet, balance: investmentWallet.balance + amount, lastUpdated: new Date().toISOString().split("T")[0] } });
+          if (walletId === savingsWallet?.id) {
+            set({
+              savingsWallet: {
+                ...savingsWallet,
+                balance: savingsWallet.balance + amount,
+                lastUpdated: new Date().toISOString().split("T")[0],
+              },
+            });
+          }
+          if (walletId === investmentWallet?.id) {
+            set({
+              investmentWallet: {
+                ...investmentWallet,
+                balance: investmentWallet.balance + amount,
+                lastUpdated: new Date().toISOString().split("T")[0],
+              },
+            });
+          }
           get().updateTotalWallet();
         },
+
         withdrawFromWallet: (walletId, amount) => {
           const { savingsWallet, investmentWallet } = get();
-          if (walletId === savingsWallet?.id && savingsWallet.balance >= amount) set({ savingsWallet: { ...savingsWallet, balance: savingsWallet.balance - amount, lastUpdated: new Date().toISOString().split("T")[0] } });
-          if (walletId === investmentWallet?.id && investmentWallet.balance >= amount) set({ investmentWallet: { ...investmentWallet, balance: investmentWallet.balance - amount, lastUpdated: new Date().toISOString().split("T")[0] } });
+
+          if (walletId === savingsWallet?.id && savingsWallet.balance >= amount) {
+            set({
+              savingsWallet: {
+                ...savingsWallet,
+                balance: savingsWallet.balance - amount,
+                lastUpdated: new Date().toISOString().split("T")[0],
+              },
+            });
+          }
+
+          if (walletId === investmentWallet?.id && investmentWallet.balance >= amount) {
+            set({
+              investmentWallet: {
+                ...investmentWallet,
+                balance: investmentWallet.balance - amount,
+                lastUpdated: new Date().toISOString().split("T")[0],
+              },
+            });
+          }
+
           get().updateTotalWallet();
         },
+
         updateTotalWallet: () => {
           const { savingsWallet, investmentWallet } = get();
           const total = (savingsWallet?.balance ?? 0) + (investmentWallet?.balance ?? 0);
-          set({ totalWallet: { id: "total-001", type: "total", balance: total, growth: calculateCombinedGrowth(savingsWallet, investmentWallet), lastUpdated: new Date().toISOString().split("T")[0] } });
+          set({
+            totalWallet: {
+              id: "total-001",
+              type: "total",
+              balance: total,
+              growth: calculateCombinedGrowth(savingsWallet, investmentWallet),
+              lastUpdated: new Date().toISOString().split("T")[0],
+            },
+          });
         },
+
         calculateTotalBalance: () => {
           const { savingsWallet, investmentWallet } = get();
           return (savingsWallet?.balance ?? 0) + (investmentWallet?.balance ?? 0);
         },
+
         calculateBreakdown: () => {
           const { savingsWallet, investmentWallet } = get();
           const s = savingsWallet?.balance ?? 0;
@@ -132,26 +287,31 @@ export const useWalletStore = create<WalletStore>()(
           return { savings: s, investment: i, total: s + i };
         },
 
-        // -------------------
-        // Loan Actions
-        // -------------------
+        /* ---------------------------------------------------
+           Loan Actions (unchanged)
+        --------------------------------------------------- */
         addLoan: (amount, interestRate, dueDate) => {
           const newLoan: Loan = {
             id: `loan-${Date.now()}`,
             amount,
             interestRate,
-            balance: amount, // remaining balance
+            balance: amount,
             status: "active",
             createdAt: new Date().toISOString(),
             dueDate,
           };
           set({ loans: [...get().loans, newLoan] });
         },
+
         repayLoan: (loanId, amount) => {
           const loans = get().loans.map((loan) => {
             if (loan.id === loanId) {
               const newBalance = Math.max(loan.balance - amount, 0);
-              return { ...loan, balance: newBalance, status: newBalance === 0 ? "paid" : loan.status };
+              return {
+                ...loan,
+                balance: newBalance,
+                status: newBalance === 0 ? "paid" : loan.status,
+              };
             }
             return loan;
           });
@@ -161,7 +321,12 @@ export const useWalletStore = create<WalletStore>()(
     },
     {
       name: "wallet-store-demo",
-      partialize: (s) => ({ savingsWallet: s.savingsWallet, investmentWallet: s.investmentWallet, totalWallet: s.totalWallet, loans: s.loans }),
+      partialize: (s) => ({
+        savingsWallet: s.savingsWallet,
+        investmentWallet: s.investmentWallet,
+        totalWallet: s.totalWallet,
+        loans: s.loans,
+      }),
     }
   )
 );

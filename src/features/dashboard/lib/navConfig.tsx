@@ -40,7 +40,7 @@ export const navLinks = [
   { label: "My wallet", href: "/dashboard/wallet", icon: <MdAccountBalanceWallet /> },
   { label: "Investments", href: "/dashboard/investments", icon: <MdTrendingUp /> },
   { label: "Loans", href: "/dashboard/loans", icon: <FaSackDollar /> },
-  { label: "Withdrawals", href: "/dashboard/withdrawals", icon: <MdPayment /> },
+  { label: "Withdrawals", href: "/dashboard/withdraw", icon: <MdPayment /> },
   { label: "Transactions", href: "/dashboard/transactions", icon: <MdListAlt /> },
   
 ];
