@@ -1,4 +1,4 @@
-// src/app/auth/page.tsx -> this page only simulates the login cause the onboarding is not connected to a backend yet  
+// src/app/auth/page.tsx -> this page only simulates the login cause the onboarding is not connected to a backend yet
 "use client";
 
 import { useState } from "react";
@@ -50,6 +50,10 @@ export default function LoginPage() {
         <h1 className="text-[clamp(1.5rem,4vw,2.25rem)] text-center font-extrabold mb-6 text-gray-900">
           Welcome Back
         </h1>
+        <p className="text-center text-gray-600 mb-6">
+          Use demo credentials johndoe@gmail.com or +256700000000 with password
+          password123
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email / Phone */}
@@ -153,10 +157,7 @@ export default function LoginPage() {
         {/* Signup Link */}
         <p className="text-center text-sm mt-6 text-gray-700">
           New Customer?{" "}
-          <Link
-            href="/auth/signup"
-            className="font-medium underline hover:text-green-700"
-          >
+          <Link href="/" className="font-medium underline hover:text-green-700">
             Start here
           </Link>
         </p>

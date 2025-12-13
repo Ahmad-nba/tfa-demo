@@ -94,9 +94,11 @@ export default function Navbar() {
           )}
 
           {!isLoggedIn && (
-            <button className="bg-success text-text-primary px-4 py-2 rounded-lg hover:bg-success/80 transition">
-              Login
-            </button>
+            <Link href="/auth">
+              <button className="bg-success text-text-primary px-4 py-2 rounded-lg hover:bg-success/80 transition">
+                Login
+              </button>
+            </Link>
           )}
         </div>
 
