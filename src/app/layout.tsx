@@ -1,4 +1,6 @@
 import { Toaster } from "react-hot-toast";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 import "./globals.css";
 
 export const metadata = {
@@ -22,8 +24,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Toaster position="top-center" />
-        {children}</body>
-      
+        {children}
+         <SpeedInsights />
+      </body>
     </html>
   );
 }
